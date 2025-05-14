@@ -1,17 +1,34 @@
+
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, Quote } from 'lucide-react';
+import { generateImage } from '@/ai/flows/generate-image-flow';
 
 interface TestimonialCardProps {
   quote: string;
   name: string;
   role: string;
-  avatarUrl: string;
+  avatarUrl: string; // This will now be the default/fallback
   avatarHint: string;
   rating: number;
 }
 
-const TestimonialCard: React.FC<TestimonialCardProps> = ({ quote, name, role, avatarUrl, avatarHint, rating }) => {
+const TestimonialCard: React.FC<TestimonialCardProps> = async ({ quote, name, role, avatarUrl: defaultAvatarUrl, avatarHint, rating }) => {
+  let currentAvatarUrl = defaultAvatarUrl;
+  if (!currentAvatarUrl.endsWith('.png') && currentAvatarUrl.startsWith('https://placehold.co')) {
+    currentAvatarUrl = `${currentAvatarUrl}.png`;
+  }
+
+  try {
+    const genOutput = await generateImage({ prompt: avatarHint });
+    if (genOutput.imageDataUri) {
+      currentAvatarUrl = genOutput.imageDataUri;
+    }
+  } catch (error) {
+    console.error(`Failed to generate avatar for "${name}" (hint: ${avatarHint}):`, error);
+    // currentAvatarUrl remains the default placeholder
+  }
+  
   return (
     <Card className="h-full flex flex-col justify-between bg-card shadow-lg p-6 rounded-lg">
       <CardContent className="p-0">
@@ -19,7 +36,14 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ quote, name, role, av
         <p className="text-foreground/80 italic mb-6 text-base leading-relaxed">&ldquo;{quote}&rdquo;</p>
         <div className="flex items-center">
           <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4">
-            <Image src={avatarUrl} alt={name} layout="fill" objectFit="cover" data-ai-hint={avatarHint} />
+            <Image 
+              src={currentAvatarUrl} 
+              alt={name} 
+              fill={true} 
+              className="object-cover" 
+              data-ai-hint={avatarHint} // Keep hint for reference
+              unoptimized={currentAvatarUrl.startsWith('data:')} // Necessary for base64 data URIs
+            />
           </div>
           <div>
             <p className="font-semibold text-md text-primary">{name}</p>

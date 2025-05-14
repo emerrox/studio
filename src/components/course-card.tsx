@@ -1,26 +1,51 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { generateImage } from '@/ai/flows/generate-image-flow';
 
 interface CourseCardProps {
   title: string;
   description: string;
   icon: LucideIcon;
-  imageUrl: string;
+  imageUrl: string; // This will now be the default/fallback
   imageHint: string;
   tags: string[];
   link: string;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ title, description, icon: Icon, imageUrl, imageHint, tags, link }) => {
+const CourseCard: React.FC<CourseCardProps> = async ({ title, description, icon: Icon, imageUrl: defaultImageUrl, imageHint, tags, link }) => {
+  let currentImageUrl = defaultImageUrl;
+  if (!currentImageUrl.endsWith('.png') && currentImageUrl.startsWith('https://placehold.co')) {
+    currentImageUrl = `${currentImageUrl}.png`;
+  }
+
+
+  try {
+    const genOutput = await generateImage({ prompt: imageHint });
+    if (genOutput.imageDataUri) {
+      currentImageUrl = genOutput.imageDataUri;
+    }
+  } catch (error) {
+    console.error(`Failed to generate image for course "${title}" (hint: ${imageHint}):`, error);
+    // currentImageUrl remains the default placeholder
+  }
+
   return (
     <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
       <CardHeader className="p-0">
         <div className="relative h-48 w-full">
-          <Image src={imageUrl} alt={title} layout="fill" objectFit="cover" data-ai-hint={imageHint} />
+          <Image 
+            src={currentImageUrl} 
+            alt={title} 
+            fill={true} 
+            className="object-cover" 
+            data-ai-hint={imageHint} // Keep hint for reference or future re-generation
+            unoptimized={currentImageUrl.startsWith('data:')} // Necessary for base64 data URIs
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           <Icon className="absolute top-4 right-4 h-8 w-8 text-white/80" />
         </div>

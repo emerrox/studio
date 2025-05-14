@@ -1,3 +1,4 @@
+
 import TestimonialCard from './testimonial-card';
 
 const testimonials = [
@@ -5,7 +6,7 @@ const testimonials = [
     quote: "The GWO Basic Safety Training was incredibly thorough and practical. I feel much more confident working at heights now. The instructors were top-notch!",
     name: 'Alex Johnson',
     role: 'Wind Turbine Technician',
-    avatarUrl: 'https://placehold.co/100x100',
+    avatarUrl: 'https://placehold.co/100x100', // Base URL, .png will be added in TestimonialCard
     avatarHint: 'professional headshot',
     rating: 5,
   },
@@ -39,6 +40,7 @@ const TestimonialsSection = () => {
         </div>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((testimonial) => (
+            // TestimonialCard is now an async component
             <TestimonialCard key={testimonial.name} {...testimonial} />
           ))}
         </div>
