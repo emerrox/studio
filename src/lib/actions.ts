@@ -2,6 +2,7 @@
 "use server";
 
 import { z } from "zod";
+import { Resend } from 'resend';
 
 // Define the schema for form validation from the server-side
 const contactFormSchema = z.object({
@@ -47,55 +48,36 @@ export async function submitContactForm(
   }
 
   const { name, email, phone, course, message } = validatedFields.data;
-  const recipientEmail = "web@totalhse.com";
+  const recipientEmail = "contact@app.totalhse.com"; // Updated recipient email
 
   // In a real application, you would use an email sending service here.
   // For example, using Resend, Nodemailer, AWS SES, etc.
-  // const resend = new Resend(process.env.RESEND_API_KEY);
-  // try {
-  //   await resend.emails.send({
-  //     from: 'GWO Training Solutions <noreply@yourdomain.com>', // Replace with your domain
-  //     to: recipientEmail,
-  //     reply_to: email, // Set reply-to to the submitter's email
-  //     subject: `New GWO Course Inquiry from ${name}`,
-  //     html: `
-  //       <h2>New Contact Form Submission</h2>
-  //       <p><strong>Name:</strong> ${name}</p>
-  //       <p><strong>Email:</strong> ${email}</p>
-  //       ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
-  //       ${course ? `<p><strong>Course of Interest:</strong> ${course}</p>` : ''}
-  //       <p><strong>Message:</strong></p>
-  //       <p>${message.replace(/\n/g, '<br>')}</p>
-  //     `,
-  //   });
-  //  console.log("Email sent successfully via email provider.");
-  //  return { message: "Thank you! Your message has been sent successfully.", status: "success" };
-  // } catch (error) {
-  //   console.error("Email sending error:", error);
-  //   return { 
-  //     message: "Failed to send message due to a server error. Please try again later.", 
-  //     status: "error",
-  //     errors: { _form: ["Server error during email dispatch."] },
-  //     fieldValues: validatedFields.data
-  //   };
-  // }
-
-  // Placeholder for email sending logic (simulating success)
-  console.log("--- Contact Form Submission (Simulated) ---");
-  console.log("Recipient:", recipientEmail);
-  console.log("Name:", name);
-  console.log("Email:", email);
-  if (phone) console.log("Phone:", phone);
-  if (course) console.log("Course:", course);
-  console.log("Message:", message);
-  console.log("--- End of Submission ---");
-  
-  // Simulate a short delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  return { 
-    message: "Thank you! Your message has been sent successfully (simulated). We will get back to you shortly.", 
-    status: "success",
-    errors: null,
-  };
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  try {
+    await resend.emails.send({
+      from: 'GWO Training Solutions <noreply@yourdomain.com>', // Replace with your verified Resend domain/email
+      to: recipientEmail,
+      reply_to: email, // Set reply-to to the submitter's email
+      subject: `New GWO Course Inquiry from ${name}`,
+      html: `
+        <h2>New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
+        ${course ? `<p><strong>Course of Interest:</strong> ${course}</p>` : ''}
+        <p><strong>Message:</strong></p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
+      `,
+    });
+   console.log("Email sent successfully via Resend.");
+   return { message: "Thank you! Your message has been sent successfully.", status: "success", errors: null, };
+  } catch (error) {
+    console.error("Email sending error:", error);
+    return { 
+      message: "Failed to send message due to a server error. Please try again later.", 
+      status: "error",
+      errors: { _form: ["Server error during email dispatch."] },
+      fieldValues: validatedFields.data
+    };
+  }
 }
