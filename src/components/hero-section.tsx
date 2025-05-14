@@ -35,7 +35,7 @@ const HeroSection = () => {
           layout="fill"
           objectFit="cover"
           className="opacity-10"
-          data-ai-hint="wind turbine safety training"
+          data-ai-hint="wind safety"
         />
       </div>
     </section>
