@@ -1,5 +1,4 @@
 
-import Image from 'next/image';
 import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -10,32 +9,15 @@ interface CourseCardProps {
   title: string;
   description: string;
   icon: LucideIcon;
-  imageUrl: string;
-  imageHint: string;
   tags: string[];
   link: string;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ title, description, icon: Icon, imageUrl, imageHint, tags, link }) => {
-  let displayImageUrl = imageUrl;
-  if (displayImageUrl.startsWith('https://placehold.co/') && !displayImageUrl.endsWith('.png')) {
-    displayImageUrl = `${displayImageUrl}.png`;
-  }
-
+const CourseCard: React.FC<CourseCardProps> = ({ title, description, icon: Icon, tags, link }) => {
   return (
     <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
-      <CardHeader className="p-0">
-        <div className="relative h-48 w-full">
-          <Image
-            src={displayImageUrl}
-            alt={title}
-            fill={true}
-            className="object-cover"
-            data-ai-hint={imageHint}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          <Icon className="absolute top-4 right-4 h-8 w-8 text-white/80" />
-        </div>
+      <CardHeader className="p-6 flex justify-center items-center bg-muted/30 h-48">
+        <Icon className="h-24 w-24 text-primary" />
       </CardHeader>
       <CardContent className="p-6 flex-grow">
         <CardTitle className="text-xl font-semibold mb-2">{title}</CardTitle>

@@ -1,8 +1,17 @@
-// src/lib/actions.ts
 "use server";
 
 import { z } from "zod";
-import { Resend } from 'resend';
+import nodemailer from "nodemailer";
+
+// SMTP test credentials (hardcoded for testing purposes)
+const TEST_SMTP = {
+  host: 'smtp.mail.ovh.net',
+  port: 465,
+  secure: true,
+  user: 'app@totalhse.com',
+  pass: 'trabajosenaltura23',
+  from: 'app@totalhse.com',
+};
 
 // Define the schema for form validation from the server-side
 const contactFormSchema = z.object({
@@ -16,7 +25,7 @@ const contactFormSchema = z.object({
 export type ContactFormState = {
   message: string;
   status: "success" | "error" | "idle";
-  errors?: Record<keyof z.infer<typeof contactFormSchema> | "_form", string[]> | null;
+  errors?: Partial<Record<keyof z.infer<typeof contactFormSchema> | "_form", string[]>> | null;
   fieldValues?: z.infer<typeof contactFormSchema>;
 };
 
@@ -27,17 +36,18 @@ export async function submitContactForm(
   const validatedFields = contactFormSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
-    phone: formData.get("phone") || undefined, // Ensure undefined if empty for Zod optional
+    phone: formData.get("phone") || undefined,
     course: formData.get("course") || undefined,
     message: formData.get("message"),
   });
 
   if (!validatedFields.success) {
+    const fieldErrors = validatedFields.error.flatten().fieldErrors;
     return {
       message: "Form validation failed. Please check the fields below.",
       status: "error",
-      errors: validatedFields.error.flatten().fieldErrors,
-      fieldValues: { // Keep previous values
+      errors: { ...fieldErrors, _form: ["Validation failed"] },
+      fieldValues: {
         name: formData.get("name") as string,
         email: formData.get("email") as string,
         phone: formData.get("phone") as string | undefined,
@@ -48,16 +58,24 @@ export async function submitContactForm(
   }
 
   const { name, email, phone, course, message } = validatedFields.data;
-  const recipientEmail = "contact@app.totalhse.com"; // Updated recipient email
+  const recipientEmail = "app@totalhse.com";
 
-  // In a real application, you would use an email sending service here.
-  // For example, using Resend, Nodemailer, AWS SES, etc.
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  // Configure SMTP transporter using test data
+  const transporter = nodemailer.createTransport({
+    host: TEST_SMTP.host,
+    port: TEST_SMTP.port,
+    secure: TEST_SMTP.secure,
+    auth: {
+      user: TEST_SMTP.user,
+      pass: TEST_SMTP.pass,
+    },
+  });
+
   try {
-    await resend.emails.send({
-      from: 'GWO Training Solutions <noreply@yourdomain.com>', // Replace with your verified Resend domain/email
+    await transporter.sendMail({
+      from: `\"${name}\" <${TEST_SMTP.from}>`,
       to: recipientEmail,
-      reply_to: email, // Set reply-to to the submitter's email
+      replyTo: email,
       subject: `New GWO Course Inquiry from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>
@@ -69,15 +87,20 @@ export async function submitContactForm(
         <p>${message.replace(/\n/g, '<br>')}</p>
       `,
     });
-   console.log("Email sent successfully via Resend.");
-   return { message: "Thank you! Your message has been sent successfully.", status: "success", errors: null, };
+
+    console.log("Email sent successfully via SMTP test server.");
+    return {
+      message: "Thank you! Your message has been sent successfully.",
+      status: "success",
+      errors: null,
+    };
   } catch (error) {
-    console.error("Email sending error:", error);
-    return { 
-      message: "Failed to send message due to a server error. Please try again later.", 
+    console.error("Error sending email via SMTP test server:", error);
+    return {
+      message: "Failed to send message due to a server error. Please try again later.",
       status: "error",
       errors: { _form: ["Server error during email dispatch."] },
-      fieldValues: validatedFields.data
+      fieldValues: validatedFields.data,
     };
   }
 }

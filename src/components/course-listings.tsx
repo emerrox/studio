@@ -7,8 +7,6 @@ const courses = [
     title: 'GWO Basic Safety Training (BST)',
     description: 'Essential safety skills covering First Aid, Manual Handling, Fire Awareness, Working at Heights, and Sea Survival modules.',
     icon: Award,
-    imageUrl: 'https://placehold.co/600x400', // Base URL, .png will be added in CourseCard
-    imageHint: 'safety training',
     tags: ['5 Modules', 'GWO Certified'],
     link: '#contact',
   },
@@ -16,8 +14,6 @@ const courses = [
     title: 'GWO Basic Technical Training (BTT)',
     description: 'Fundamental technical knowledge for wind turbine technicians, including mechanical, electrical, and hydraulic systems.',
     icon: HardHat,
-    imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'technical turbine',
     tags: ['3 Modules', 'Hands-on'],
     link: '#contact',
   },
@@ -25,8 +21,6 @@ const courses = [
     title: 'GWO Advanced Rescue Training (ART)',
     description: 'Advanced techniques for rescue operations in various wind turbine environments. Builds upon BST Working at Heights.',
     icon: BookOpenText, 
-    imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'rescue height',
     tags: ['High-Risk', 'Specialized'],
     link: '#contact',
   },
@@ -34,8 +28,6 @@ const courses = [
     title: 'GWO Sea Survival Training',
     description: 'Specialized training for personnel working offshore, covering emergency procedures and survival techniques at sea.',
     icon: Anchor,
-    imageUrl: 'https://placehold.co/600x400',
-    imageHint: 'offshore survival',
     tags: ['Offshore', 'Safety Critical'],
     link: '#contact',
   },
@@ -53,7 +45,6 @@ const CourseListings = () => {
         </div>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {courses.map((course) => (
-            // CourseCard is now an async component, this usage is fine in RSC
             <CourseCard key={course.title} {...course} />
           ))}
         </div>

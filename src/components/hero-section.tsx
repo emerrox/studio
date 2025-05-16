@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 
 const HeroSection = () => {
-  const imageHint = "wind safety";
-  const defaultImageUrl = "https://placehold.co/1920x1080.png";
+  const heroImageUrl = "/images/imagen.png"; // Using local image
 
   return (
     <section className="relative py-20 md:py-32 bg-gradient-to-b from-secondary via-background to-background">
@@ -34,12 +33,11 @@ const HeroSection = () => {
       </div>
       <div aria-hidden="true" className="absolute inset-0 overflow-hidden -z-10">
         <Image
-          src={defaultImageUrl}
-          alt="Wind turbines background with a focus on safety measures"
+          src={heroImageUrl}
+          alt="GWO certified training for wind energy professionals" // Updated alt text
           fill={true}
           className="object-cover opacity-10"
           priority // For LCP images
-          data-ai-hint={imageHint}
         />
       </div>
     </section>
