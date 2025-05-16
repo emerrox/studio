@@ -21,7 +21,7 @@ const SiteFooter = () => {
             <Link href="/#courses" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-150 ease-in-out">Courses</Link>
             <Link href="/#testimonials" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-150 ease-in-out">Testimonials</Link>
             <Link href="/#contact" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-150 ease-in-out">Contact Us</Link>
-            <Link href="/cookie-policy.html" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-150 ease-in-out">Cookie Policy</Link>
+            <Link href="/cookie-policy" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-150 ease-in-out">Cookie Policy</Link>
             <Link href="/privacy-policy" className="hover:text-primary transition-colors hover:-translate-y-0.5 transform duration-150 ease-in-out">Privacy Policy</Link>
           </nav>
         </div>

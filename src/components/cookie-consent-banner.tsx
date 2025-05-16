@@ -1,3 +1,4 @@
+
 // src/components/cookie-consent-banner.tsx
 "use client";
 
@@ -41,7 +42,7 @@ const CookieConsentBanner = () => {
           <p>
             This website uses cookies to ensure you get the best experience. By clicking "Accept", you agree to our use of cookies. 
             Learn more in our{' '}
-            <Link href="/cookie-policy.html" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary transition-colors">
+            <Link href="/cookie-policy" className="underline hover:text-primary transition-colors">
               Cookie Policy
             </Link>.
           </p>
