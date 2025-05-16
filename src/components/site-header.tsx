@@ -23,11 +23,7 @@ const SiteHeader = () => {
             Contact
           </Link>
         </nav>
-        <div className="flex items-center space-x-2">
-          <Button asChild variant="default">
-            <Link href="#contact">Register Now</Link>
-          </Button>
-        </div>
+        {/* The "Register Now" button and its wrapping div have been removed */}
       </div>
     </header>
   );

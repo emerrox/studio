@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect } from 'react';
-import { useActionState } from 'react'; // Changed from useFormState
+import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/card'; // Ensured import
 import { useToast } from '@/hooks/use-toast';
 import { submitContactForm, type ContactFormState } from '@/lib/actions';
 import { User, Mail, Phone, BookOpenText, MessageSquare, Loader2 } from 'lucide-react';
@@ -56,7 +56,7 @@ const ContactForm = () => {
   const { toast } = useToast();
   
   const initialState: ContactFormState = { message: '', status: 'idle', errors: null, fieldValues: {name: '', email: '', message: ''} };
-  const [state, formAction] = useActionState(submitContactForm, initialState); // Changed from useFormState
+  const [state, formAction] = useActionState(submitContactForm, initialState);
 
   const { control, handleSubmit, reset, formState: { errors: clientErrors }, setValue } = useForm<FormData>({
     resolver: zodResolver(formSchema),
