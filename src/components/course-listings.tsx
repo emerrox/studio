@@ -1,34 +1,69 @@
 
-import { Award, BookOpenText, Anchor, HardHat } from 'lucide-react';
+import { Award, BookOpenText, HardHat, Wrench, HeartPulse, Zap, Move, KeyRound, Clipboard } from 'lucide-react';
 import CourseCard from './course-card';
 
 const courses = [
   {
-    title: 'GWO Basic Safety Training (BST)',
+    title: 'GWO Basic Safety Training (BST)', // Kept original as it was not in the new list but is standard
     description: 'Essential safety skills covering First Aid, Manual Handling, Fire Awareness, Working at Heights, and Sea Survival modules.',
     icon: Award,
     tags: ['5 Modules', 'GWO Certified'],
     link: '#contact',
   },
   {
-    title: 'GWO Basic Technical Training (BTT)',
-    description: 'Fundamental technical knowledge for wind turbine technicians, including mechanical, electrical, and hydraulic systems.',
+    title: 'Basic Technical Training',
+    description: 'Modules: BTT Hydraulics (8h), BTT Electricity (9h), BTT Mechanics (13.5h), BTT Installation (18h).',
     icon: HardHat,
-    tags: ['3 Modules', 'Hands-on'],
+    tags: ['4 Modules', 'Technical Skills'],
     link: '#contact',
   },
   {
-    title: 'GWO Advanced Rescue Training (ART)',
-    description: 'Advanced techniques for rescue operations in various wind turbine environments. Builds upon BST Working at Heights.',
-    icon: BookOpenText, 
-    tags: ['High-Risk', 'Specialized'],
+    title: 'Advanced Rescue Training',
+    description: 'Courses: Hub, Rotor, Blade Interior Rescue (1); Nacelle, Tower, Basement Rescue (2); Industrial Rescue (1); Industrial Rescue (2); Nacelle Rescue Refresh. Possibility of Combined ART with all four modules.',
+    icon: BookOpenText,
+    tags: ['Specialized Rescue', 'GWO Certified'],
     link: '#contact',
   },
   {
-    title: 'GWO Sea Survival Training',
-    description: 'Specialized training for personnel working offshore, covering emergency procedures and survival techniques at sea.',
-    icon: Anchor,
-    tags: ['Offshore', 'Safety Critical'],
+    title: 'Blade Repair',
+    description: 'Courses: GWO Blade Repair, Siemens Gamesa Blade Repair. New essential requirement to work in blade repair in the global wind sector.',
+    icon: Wrench,
+    tags: ['Blade Maintenance', 'GWO Certified'],
+    link: '#contact',
+  },
+  {
+    title: 'Enhanced First Aid',
+    description: 'Courses: BST First Aid and Advanced First Aid. BST First Aid Refresh and Advanced First Aid Refresh.',
+    icon: HeartPulse,
+    tags: ['Advanced Medical', 'GWO Certified'],
+    link: '#contact',
+  },
+  {
+    title: 'Control of Hazardous Energies',
+    description: 'Modules: Basic Safety Module, Electrical Safety Module, and Pressurized Fluids Safety Module.',
+    icon: Zap,
+    tags: ['LOTO', 'Safety Procedures'],
+    link: '#contact',
+  },
+  {
+    title: 'Slinger Signaller',
+    description: 'Course: Signalling and load lifting + Hoists.',
+    icon: Move,
+    tags: ['Lifting Operations', 'Crane Safety'],
+    link: '#contact',
+  },
+  {
+    title: 'Wind Limited Access',
+    description: 'Courses: Onshore Restricted Access and Offshore Restricted Access.',
+    icon: KeyRound,
+    tags: ['Restricted Access', 'Site Safety'],
+    link: '#contact',
+  },
+  {
+    title: 'Instructor Qualification Training',
+    description: 'Courses: Instructor Qualification Training (IQT), Cross-Skilling Instructor Qualification Training (IQTX).',
+    icon: Clipboard,
+    tags: ['Train the Trainer', 'GWO Certified'],
     link: '#contact',
   },
 ];
@@ -43,7 +78,7 @@ const CourseListings = () => {
             Comprehensive training programs designed to meet global wind industry standards.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"> {/* Adjusted grid for potentially 9 items */}
           {courses.map((course) => (
             <CourseCard key={course.title} {...course} />
           ))}
