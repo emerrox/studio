@@ -1,22 +1,22 @@
 
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
-import { Star, Quote } from 'lucide-react';
+import { Star, Quote, UserCircle } from 'lucide-react'; // Added UserCircle
 
 interface TestimonialCardProps {
   quote: string;
   name: string;
   role: string;
-  avatarUrl: string;
-  avatarHint: string;
+  // avatarUrl: string; // Removed
+  // avatarHint: string; // Removed
   rating: number;
 }
 
-const TestimonialCard: React.FC<TestimonialCardProps> = ({ quote, name, role, avatarUrl, avatarHint, rating }) => {
-  let displayAvatarUrl = avatarUrl;
-  if (displayAvatarUrl.startsWith('https://placehold.co/') && !displayAvatarUrl.endsWith('.png')) {
-    displayAvatarUrl = `${displayAvatarUrl}.png`;
-  }
+const TestimonialCard: React.FC<TestimonialCardProps> = ({ quote, name, role, rating }) => {
+  // let displayAvatarUrl = avatarUrl; // Removed
+  // if (displayAvatarUrl.startsWith('https://placehold.co/') && !displayAvatarUrl.endsWith('.png')) { // Removed
+  //   displayAvatarUrl = `${displayAvatarUrl}.png`; // Removed
+  // } // Removed
 
   return (
     <Card className="h-full flex flex-col justify-between bg-card shadow-lg p-6 rounded-lg">
@@ -24,14 +24,9 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ quote, name, role, av
         <Quote className="w-8 h-8 text-primary mb-4 transform -scale-x-100" />
         <p className="text-foreground/80 italic mb-6 text-base leading-relaxed">&ldquo;{quote}&rdquo;</p>
         <div className="flex items-center">
-          <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4">
-            <Image
-              src={displayAvatarUrl}
-              alt={name}
-              fill={true}
-              className="object-cover"
-              data-ai-hint={avatarHint}
-            />
+          <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4 flex items-center justify-center bg-muted">
+            {/* Replaced Image with UserCircle icon */}
+            <UserCircle className="h-10 w-10 text-foreground/50" />
           </div>
           <div>
             <p className="font-semibold text-md text-primary">{name}</p>
