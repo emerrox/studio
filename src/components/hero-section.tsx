@@ -34,7 +34,12 @@ const HeroSection = () => {
               <ChevronRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="border-gray-300 text-gray-200 hover:bg-white/10 hover:text-white">
+          <Button 
+            asChild 
+            size="lg" 
+            variant="outline" 
+            className="border-white text-white bg-transparent hover:bg-white hover:text-primary focus-visible:ring-white"
+          >
             <Link href="#contact">
               Contact Us
             </Link>
