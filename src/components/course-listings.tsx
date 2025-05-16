@@ -1,69 +1,83 @@
 
-import { Award, BookOpenText, HardHat, Wrench, HeartPulse, Zap, Move, KeyRound, Clipboard } from 'lucide-react';
+import { ShieldCheck, RefreshCw, ArrowUpFromLine, HardHat, BookOpenText, Wrench, HeartPulse, Zap, Move, KeyRound, Clipboard } from 'lucide-react';
 import CourseCard from './course-card';
 
 const courses = [
   {
-    title: 'GWO Basic Safety Training (BST)', // Kept original as it was not in the new list but is standard
-    description: 'Essential safety skills covering First Aid, Manual Handling, Fire Awareness, Working at Heights, and Sea Survival modules.',
-    icon: Award,
-    tags: ['5 Modules', 'GWO Certified'],
+    title: 'Basic Safety Training',
+    description: 'Core safety skills: First Aid, Manual Handling, Fire Awareness, Working at Heights, and Sea Survival modules.',
+    icon: ShieldCheck,
+    tags: ['5 Modules', 'GWO Certified', '28-35h'],
+    link: '#contact',
+  },
+  {
+    title: 'Basic Safety Training Refresh',
+    description: 'Refresher for core safety skills: First Aid, Manual Handling, Fire Awareness, Working at Heights, Sea Survival. Online Partial available.',
+    icon: RefreshCw,
+    tags: ['5 Modules', 'GWO Refresh', '18-25h', 'Online Option'],
+    link: '#contact',
+  },
+  {
+    title: 'Lift Training',
+    description: 'Training for lift users (4h), commissioning & inspection (7h), and full operation including installation & maintenance (14h).',
+    icon: ArrowUpFromLine,
+    tags: ['Specialized Lift', 'Up to 25h', 'Phased Modules'],
     link: '#contact',
   },
   {
     title: 'Basic Technical Training',
-    description: 'Modules: BTT Hydraulics (8h), BTT Electricity (9h), BTT Mechanics (13.5h), BTT Installation (18h).',
+    description: 'Technical training in Hydraulics (8h), Electricity (9h), Mechanics (13.5h), and Installation (18h).',
     icon: HardHat,
-    tags: ['4 Modules', 'Technical Skills'],
+    tags: ['4 Modules', 'Technical', '29-30.5h'],
     link: '#contact',
   },
   {
     title: 'Advanced Rescue Training',
-    description: 'Courses: Hub, Rotor, Blade Interior Rescue (1); Nacelle, Tower, Basement Rescue (2); Industrial Rescue (1); Industrial Rescue (2); Nacelle Rescue Refresh. Possibility of Combined ART with all four modules.',
+    description: 'Advanced rescue: Hub/Rotor/Blade Interior, Nacelle/Tower/Basement, Industrial Rescue (1&2), Nacelle Refresh. Combined ART option.',
     icon: BookOpenText,
-    tags: ['Specialized Rescue', 'GWO Certified'],
+    tags: ['Specialized Rescue', 'GWO Certified', '21h Combined'],
     link: '#contact',
   },
   {
     title: 'Blade Repair',
-    description: 'Courses: GWO Blade Repair, Siemens Gamesa Blade Repair. New essential requirement to work in blade repair in the global wind sector.',
+    description: 'GWO & Siemens Gamesa Blade Repair courses. Essential new requirement for global wind sector blade repair.',
     icon: Wrench,
-    tags: ['Blade Maintenance', 'GWO Certified'],
+    tags: ['Blade Maintenance', 'GWO Certified', '70h'],
     link: '#contact',
   },
   {
     title: 'Enhanced First Aid',
-    description: 'Courses: BST First Aid and Advanced First Aid. BST First Aid Refresh and Advanced First Aid Refresh.',
+    description: 'BST First Aid, Advanced First Aid, and Refresher courses for both.',
     icon: HeartPulse,
-    tags: ['Advanced Medical', 'GWO Certified'],
+    tags: ['Advanced Medical', 'GWO Certified', '20h'],
     link: '#contact',
   },
   {
     title: 'Control of Hazardous Energies',
-    description: 'Modules: Basic Safety Module, Electrical Safety Module, and Pressurized Fluids Safety Module.',
+    description: 'Modules: Basic Safety, Electrical Safety, and Pressurized Fluids Safety.',
     icon: Zap,
-    tags: ['LOTO', 'Safety Procedures'],
+    tags: ['LOTO', 'Hazard Control', '22h'],
     link: '#contact',
   },
   {
     title: 'Slinger Signaller',
-    description: 'Course: Signalling and load lifting + Hoists.',
+    description: 'Course on signalling, load lifting, and hoists.',
     icon: Move,
-    tags: ['Lifting Operations', 'Crane Safety'],
+    tags: ['Lifting Operations', 'Crane Safety', '14h'],
     link: '#contact',
   },
   {
     title: 'Wind Limited Access',
-    description: 'Courses: Onshore Restricted Access and Offshore Restricted Access.',
+    description: 'Courses for Onshore Restricted Access and Offshore Restricted Access.',
     icon: KeyRound,
-    tags: ['Restricted Access', 'Site Safety'],
+    tags: ['Restricted Access', 'Site Safety', '7h'],
     link: '#contact',
   },
   {
     title: 'Instructor Qualification Training',
-    description: 'Courses: Instructor Qualification Training (IQT), Cross-Skilling Instructor Qualification Training (IQTX).',
+    description: 'Instructor Qualification Training (IQT) and Cross-Skilling Instructor Qualification Training (IQTX).',
     icon: Clipboard,
-    tags: ['Train the Trainer', 'GWO Certified'],
+    tags: ['Train the Trainer', 'GWO Certified', '72h'],
     link: '#contact',
   },
 ];
@@ -78,7 +92,7 @@ const CourseListings = () => {
             Comprehensive training programs designed to meet global wind industry standards.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"> {/* Adjusted grid for potentially 9 items */}
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"> {/* Adjusted for better layout with more items */}
           {courses.map((course) => (
             <CourseCard key={course.title} {...course} />
           ))}
