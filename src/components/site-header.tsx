@@ -13,13 +13,13 @@ const SiteHeader = () => {
           </span>
         </Link>
         <nav className="flex flex-1 items-center space-x-4 sm:space-x-6">
-          <Link href="#courses" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80">
+          <Link href="/#courses" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80 hover:-translate-y-0.5 transform duration-150 ease-in-out">
             Courses
           </Link>
-          <Link href="#testimonials" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80">
+          <Link href="/#testimonials" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80 hover:-translate-y-0.5 transform duration-150 ease-in-out">
             Testimonials
           </Link>
-          <Link href="#contact" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80">
+          <Link href="/#contact" className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80 hover:-translate-y-0.5 transform duration-150 ease-in-out">
             Contact
           </Link>
         </nav>
