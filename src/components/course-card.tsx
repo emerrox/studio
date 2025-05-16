@@ -15,7 +15,7 @@ interface CourseCardProps {
 
 const CourseCard: React.FC<CourseCardProps> = ({ title, description, icon: Icon, tags, link }) => {
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 h-full">
+    <Card className="flex flex-col overflow-hidden shadow-lg h-full transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105 hover:-translate-y-1">
       <CardHeader className="p-6 flex justify-center items-center bg-muted/30 h-48">
         <Icon className="h-24 w-24 text-primary" />
       </CardHeader>

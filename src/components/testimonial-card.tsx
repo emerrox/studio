@@ -7,19 +7,13 @@ interface TestimonialCardProps {
   quote: string;
   name: string;
   role: string;
-  // avatarUrl: string; // Removed
-  // avatarHint: string; // Removed
   rating: number;
 }
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ quote, name, role, rating }) => {
-  // let displayAvatarUrl = avatarUrl; // Removed
-  // if (displayAvatarUrl.startsWith('https://placehold.co/') && !displayAvatarUrl.endsWith('.png')) { // Removed
-  //   displayAvatarUrl = `${displayAvatarUrl}.png`; // Removed
-  // } // Removed
 
   return (
-    <Card className="h-full flex flex-col justify-between bg-card shadow-lg p-6 rounded-lg">
+    <Card className="h-full flex flex-col justify-between bg-card shadow-lg p-6 rounded-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105 hover:-translate-y-1">
       <CardContent className="p-0">
         <Quote className="w-8 h-8 text-primary mb-4 transform -scale-x-100" />
         <p className="text-foreground/80 italic mb-6 text-base leading-relaxed">&ldquo;{quote}&rdquo;</p>
