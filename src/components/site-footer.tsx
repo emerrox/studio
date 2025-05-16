@@ -21,7 +21,7 @@ const SiteFooter = () => {
             <Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link>
             <Link href="#contact" className="hover:text-primary transition-colors">Contact Us</Link>
             <Link href="/cookie-policy.html" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Cookie Policy</Link>
-            <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link> {/* Placeholder */}
+            <Link href="/privacy-policy.html" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Privacy Policy</Link>
           </nav>
         </div>
         <div className="mt-8 pt-8 border-t border-border/60 text-center text-sm text-foreground/60">
