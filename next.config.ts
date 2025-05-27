@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true, // This disables Next.js Image Optimization API, essential for static export
   },
+  trailingSlash: true, // Generates URLs like /page/ instead of /page
 };
 
 export default nextConfig;
