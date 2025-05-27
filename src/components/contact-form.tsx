@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/card'; // Ensure Card is imported
 import { useToast } from '@/hooks/use-toast';
 import { contactFormSchema, type ContactFormData } from '@/lib/actions';
 import { User, Mail, Phone, BookOpenText, MessageSquare, Loader2 } from 'lucide-react';
@@ -58,8 +58,8 @@ const ContactForm = () => {
     setIsProcessing(true);
 
     const SERVICE_ID = 'service_0tb90sq';
-    const TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID'; // MAKE SURE TO REPLACE THIS
-    const PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY'; // MAKE SURE TO REPLACE THIS
+    const TEMPLATE_ID = 'template_dd2949j'; // Updated TEMPLATE_ID
+    const PUBLIC_KEY = 'c4m6KwrHJnzWZP0LD';   // Updated PUBLIC_KEY
 
     const templateParams = {
       name: data.name,
@@ -224,4 +224,3 @@ const ContactFormSection = () => {
 };
 
 export default ContactFormSection;
-
