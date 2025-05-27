@@ -1,7 +1,4 @@
 
-// No longer a server action file in the traditional sense for form submission.
-// Schemas and types can still be defined here.
-
 import { z } from "zod";
 
 // Define the schema for form validation
@@ -15,12 +12,13 @@ export const contactFormSchema = z.object({
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;
 
+// Simplified state for client-side only form
 export type ContactFormState = {
   message: string;
-  status: "success" | "error" | "idle";
-  errors?: Partial<Record<keyof ContactFormData | "_form", string[]>> | null;
-  fieldValues?: ContactFormData; // This might be less relevant if not using useActionState's progressive enhancement
+  status: "success" | "error" | "idle"; // 'error' might not be used if only client validation
+  // errors are no longer expected from a server response in this setup
 };
 
-// The submitContactForm Server Action has been removed.
-// Its logic is now in /src/app/api/contact/route.ts
+// The API route logic previously in /src/app/api/contact/route.ts
+// has been removed to ensure static export compatibility.
+// Email sending functionality from this Next.js app is disabled.

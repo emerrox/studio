@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
@@ -13,9 +13,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { contactFormSchema, type ContactFormData, type ContactFormState } from '@/lib/actions';
+import { contactFormSchema, type ContactFormData } from '@/lib/actions';
 import { User, Mail, Phone, BookOpenText, MessageSquare, Loader2 } from 'lucide-react';
-
 
 const courseOptions = [
   'GWO Basic Safety Training (BST)',
@@ -42,15 +41,9 @@ function SubmitButton({ pending }: { pending: boolean }) {
 
 const ContactForm = () => {
   const { toast } = useToast();
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionState, setSubmissionState] = useState<ContactFormState>({
-    message: '',
-    status: 'idle',
-    errors: null,
-  });
+  const [isProcessing, setIsProcessing] = useState(false); // Used for button pending state
 
-  const { control, handleSubmit, reset, formState: { errors: clientErrors }, setError } = useForm<ContactFormData>({
+  const { control, handleSubmit, reset, formState: { errors: clientErrors } } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: '',
@@ -62,60 +55,22 @@ const ContactForm = () => {
   });
 
   const onSubmit = async (data: ContactFormData) => {
-    setIsSubmitting(true);
-    setSubmissionState({ message: '', status: 'idle', errors: null });
+    setIsProcessing(true);
+    // Simulate form submission for static export
+    // In a real static site, you'd submit to an external service here.
+    console.log("Form data submitted (client-side only):", data);
 
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+    // Simulate a short delay for user feedback
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-      const result: ContactFormState = await response.json();
-      setSubmissionState(result);
-
-      if (response.ok && result.status === 'success') {
-        toast({
-          title: 'Message Sent!',
-          description: result.message,
-          variant: 'default',
-        });
-        reset(); 
-      } else {
-        toast({
-          title: 'Error',
-          description: result.message || "An unexpected error occurred.",
-          variant: 'destructive',
-        });
-        if (result.errors) {
-          Object.entries(result.errors).forEach(([key, value]) => {
-            if (key !== '_form' && value && value.length > 0) {
-              setError(key as keyof ContactFormData, { type: 'server', message: value[0] });
-            }
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Submission error:", error);
-      const errorMsg = 'Failed to send message. Please try again later.';
-      toast({
-        title: 'Error',
-        description: errorMsg,
-        variant: 'destructive',
-      });
-      setSubmissionState({ message: errorMsg, status: 'error', errors: { _form: ["Network error."] } });
-    } finally {
-      setIsSubmitting(false);
-    }
+    toast({
+      title: 'Message Sent!',
+      description: "Thank you! Your message has been received (simulated).",
+      variant: 'default',
+    });
+    reset();
+    setIsProcessing(false);
   };
-  
-  const getCombinedErrors = (fieldName: keyof ContactFormData) => 
-    clientErrors[fieldName] || 
-    (submissionState.errors && submissionState.errors[fieldName]?.[0] ? { message: submissionState.errors[fieldName]?.[0] } : undefined);
-
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -126,11 +81,11 @@ const ContactForm = () => {
         <Controller
           name="name"
           control={control}
-          render={({ field }) => <Input id="name" placeholder="John Doe" {...field} aria-invalid={!!getCombinedErrors('name')} />}
+          render={({ field }) => <Input id="name" placeholder="John Doe" {...field} aria-invalid={!!clientErrors.name} />}
         />
-        {getCombinedErrors('name') && (
+        {clientErrors.name && (
           <p className="text-sm text-destructive mt-1">
-            {getCombinedErrors('name')?.message}
+            {clientErrors.name?.message}
           </p>
         )}
       </div>
@@ -142,11 +97,11 @@ const ContactForm = () => {
         <Controller
           name="email"
           control={control}
-          render={({ field }) => <Input id="email" type="email" placeholder="you@example.com" {...field} aria-invalid={!!getCombinedErrors('email')} />}
+          render={({ field }) => <Input id="email" type="email" placeholder="you@example.com" {...field} aria-invalid={!!clientErrors.email} />}
         />
-        {getCombinedErrors('email') && (
+        {clientErrors.email && (
           <p className="text-sm text-destructive mt-1">
-            {getCombinedErrors('email')?.message}
+            {clientErrors.email?.message}
           </p>
         )}
       </div>
@@ -158,11 +113,11 @@ const ContactForm = () => {
         <Controller
           name="phone"
           control={control}
-          render={({ field }) => <Input id="phone" type="tel" placeholder="+1 234 567 8900" {...field} aria-invalid={!!getCombinedErrors('phone')} />}
+          render={({ field }) => <Input id="phone" type="tel" placeholder="+1 234 567 8900" {...field} aria-invalid={!!clientErrors.phone} />}
         />
-         {getCombinedErrors('phone') && (
+         {clientErrors.phone && (
           <p className="text-sm text-destructive mt-1">
-            {getCombinedErrors('phone')?.message}
+            {clientErrors.phone?.message}
           </p>
         )}
       </div>
@@ -176,7 +131,7 @@ const ContactForm = () => {
             control={control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} defaultValue={field.value || ''} value={field.value || ''}>
-                <SelectTrigger id="course" aria-invalid={!!getCombinedErrors('course')}>
+                <SelectTrigger id="course" aria-invalid={!!clientErrors.course}>
                   <SelectValue placeholder="Select a course" />
                 </SelectTrigger>
                 <SelectContent>
@@ -189,9 +144,9 @@ const ContactForm = () => {
               </Select>
             )}
           />
-        {getCombinedErrors('course') && (
+        {clientErrors.course && (
           <p className="text-sm text-destructive mt-1">
-            {getCombinedErrors('course')?.message}
+            {clientErrors.course?.message}
           </p>
         )}
       </div>
@@ -203,30 +158,19 @@ const ContactForm = () => {
         <Controller
           name="message"
           control={control}
-          render={({ field }) => <Textarea id="message" placeholder="Your inquiry or message..." rows={5} {...field} aria-invalid={!!getCombinedErrors('message')} />}
+          render={({ field }) => <Textarea id="message" placeholder="Your inquiry or message..." rows={5} {...field} aria-invalid={!!clientErrors.message} />}
         />
-         {getCombinedErrors('message') && (
+         {clientErrors.message && (
           <p className="text-sm text-destructive mt-1">
-            {getCombinedErrors('message')?.message}
+            {clientErrors.message?.message}
           </p>
         )}
       </div>
-      
-      {submissionState.errors?._form && (
-         <p className="text-sm font-medium text-destructive">{submissionState.errors._form.join(', ')}</p>
-      )}
-      {submissionState.status === 'error' && submissionState.message && !submissionState.errors?._form && (
-         <p className="text-sm font-medium text-destructive">{submissionState.message}</p>
-      )}
-       {submissionState.status === 'success' && submissionState.message && (
-         <p className="text-sm font-medium text-green-600">{submissionState.message}</p>
-      )}
 
-      <SubmitButton pending={isSubmitting} />
+      <SubmitButton pending={isProcessing} />
     </form>
   );
 };
-
 
 const ContactFormSection = () => {
   return (

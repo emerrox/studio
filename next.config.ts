@@ -3,6 +3,7 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: 'export', // Explicitly set for static exports
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -10,17 +11,9 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true, // Add this line
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+    unoptimized: true, // This disables Next.js Image Optimization API, essential for static export
+    // remotePatterns removed as optimization is off and only local images are actively used.
   },
-  output: 'export',
 };
 
 export default nextConfig;
