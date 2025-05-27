@@ -1,9 +1,7 @@
-// src/components/contact-form.tsx
+
 "use client";
 
-import { useEffect } from 'react';
-import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
@@ -13,20 +11,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card } from '@/components/ui/card'; // Ensured import
+import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { submitContactForm, type ContactFormState } from '@/lib/actions';
+import { contactFormSchema, type ContactFormData, type ContactFormState } from '@/lib/actions';
 import { User, Mail, Phone, BookOpenText, MessageSquare, Loader2 } from 'lucide-react';
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().optional(),
-  course: z.string().optional(),
-  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
-});
-
-type FormData = z.infer<typeof formSchema>;
 
 const courseOptions = [
   'GWO Basic Safety Training (BST)',
@@ -36,8 +25,7 @@ const courseOptions = [
   'Other/General Inquiry',
 ];
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
+function SubmitButton({ pending }: { pending: boolean }) {
   return (
     <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={pending}>
       {pending ? (
@@ -55,49 +43,82 @@ function SubmitButton() {
 const ContactForm = () => {
   const { toast } = useToast();
   
-  const initialState: ContactFormState = { message: '', status: 'idle', errors: null, fieldValues: {name: '', email: '', message: ''} };
-  const [state, formAction] = useActionState(submitContactForm, initialState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionState, setSubmissionState] = useState<ContactFormState>({
+    message: '',
+    status: 'idle',
+    errors: null,
+  });
 
-  const { control, handleSubmit, reset, formState: { errors: clientErrors }, setValue } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const { control, handleSubmit, reset, formState: { errors: clientErrors }, setError } = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
     defaultValues: {
-      name: state.fieldValues?.name || '',
-      email: state.fieldValues?.email || '',
-      phone: state.fieldValues?.phone || '',
-      course: state.fieldValues?.course || '',
-      message: state.fieldValues?.message || '',
+      name: '',
+      email: '',
+      phone: '',
+      course: '',
+      message: '',
     },
   });
 
-  useEffect(() => {
-    if (state.status === 'success') {
-      toast({
-        title: 'Message Sent!',
-        description: state.message,
-        variant: 'default',
+  const onSubmit = async (data: ContactFormData) => {
+    setIsSubmitting(true);
+    setSubmissionState({ message: '', status: 'idle', errors: null });
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
-      reset(); // Reset form fields on success
-    } else if (state.status === 'error' && state.message) {
+
+      const result: ContactFormState = await response.json();
+      setSubmissionState(result);
+
+      if (response.ok && result.status === 'success') {
+        toast({
+          title: 'Message Sent!',
+          description: result.message,
+          variant: 'default',
+        });
+        reset(); 
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message || "An unexpected error occurred.",
+          variant: 'destructive',
+        });
+        if (result.errors) {
+          Object.entries(result.errors).forEach(([key, value]) => {
+            if (key !== '_form' && value && value.length > 0) {
+              setError(key as keyof ContactFormData, { type: 'server', message: value[0] });
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      const errorMsg = 'Failed to send message. Please try again later.';
       toast({
         title: 'Error',
-        description: state.message,
+        description: errorMsg,
         variant: 'destructive',
       });
-      // Re-populate form with submitted values if server error
-      if (state.fieldValues) {
-        setValue('name', state.fieldValues.name || '');
-        setValue('email', state.fieldValues.email || '');
-        setValue('phone', state.fieldValues.phone || '');
-        setValue('course', state.fieldValues.course || '');
-        setValue('message', state.fieldValues.message || '');
-      }
+      setSubmissionState({ message: errorMsg, status: 'error', errors: { _form: ["Network error."] } });
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [state, toast, reset, setValue]);
+  };
+  
+  const getCombinedErrors = (fieldName: keyof ContactFormData) => 
+    clientErrors[fieldName] || 
+    (submissionState.errors && submissionState.errors[fieldName]?.[0] ? { message: submissionState.errors[fieldName]?.[0] } : undefined);
 
-  const serverErrors = state.errors;
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
         <Label htmlFor="name" className="flex items-center mb-1">
           <User className="w-4 h-4 mr-2 text-primary" /> Full Name
@@ -105,11 +126,11 @@ const ContactForm = () => {
         <Controller
           name="name"
           control={control}
-          render={({ field }) => <Input id="name" placeholder="John Doe" {...field} aria-invalid={!!(clientErrors.name || serverErrors?.name)} />}
+          render={({ field }) => <Input id="name" placeholder="John Doe" {...field} aria-invalid={!!getCombinedErrors('name')} />}
         />
-        {(clientErrors.name || serverErrors?.name) && (
+        {getCombinedErrors('name') && (
           <p className="text-sm text-destructive mt-1">
-            {clientErrors.name?.message || serverErrors?.name?.[0]}
+            {getCombinedErrors('name')?.message}
           </p>
         )}
       </div>
@@ -121,11 +142,11 @@ const ContactForm = () => {
         <Controller
           name="email"
           control={control}
-          render={({ field }) => <Input id="email" type="email" placeholder="you@example.com" {...field} aria-invalid={!!(clientErrors.email || serverErrors?.email)} />}
+          render={({ field }) => <Input id="email" type="email" placeholder="you@example.com" {...field} aria-invalid={!!getCombinedErrors('email')} />}
         />
-        {(clientErrors.email || serverErrors?.email) && (
+        {getCombinedErrors('email') && (
           <p className="text-sm text-destructive mt-1">
-            {clientErrors.email?.message || serverErrors?.email?.[0]}
+            {getCombinedErrors('email')?.message}
           </p>
         )}
       </div>
@@ -137,11 +158,11 @@ const ContactForm = () => {
         <Controller
           name="phone"
           control={control}
-          render={({ field }) => <Input id="phone" type="tel" placeholder="+1 234 567 8900" {...field} aria-invalid={!!(clientErrors.phone || serverErrors?.phone)} />}
+          render={({ field }) => <Input id="phone" type="tel" placeholder="+1 234 567 8900" {...field} aria-invalid={!!getCombinedErrors('phone')} />}
         />
-        {(clientErrors.phone || serverErrors?.phone) && (
+         {getCombinedErrors('phone') && (
           <p className="text-sm text-destructive mt-1">
-            {clientErrors.phone?.message || serverErrors?.phone?.[0]}
+            {getCombinedErrors('phone')?.message}
           </p>
         )}
       </div>
@@ -154,8 +175,8 @@ const ContactForm = () => {
             name="course"
             control={control}
             render={({ field }) => (
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger id="course" aria-invalid={!!(clientErrors.course || serverErrors?.course)}>
+              <Select onValueChange={field.onChange} defaultValue={field.value || ''} value={field.value || ''}>
+                <SelectTrigger id="course" aria-invalid={!!getCombinedErrors('course')}>
                   <SelectValue placeholder="Select a course" />
                 </SelectTrigger>
                 <SelectContent>
@@ -168,9 +189,9 @@ const ContactForm = () => {
               </Select>
             )}
           />
-        {(clientErrors.course || serverErrors?.course) && (
+        {getCombinedErrors('course') && (
           <p className="text-sm text-destructive mt-1">
-            {clientErrors.course?.message || serverErrors?.course?.[0]}
+            {getCombinedErrors('course')?.message}
           </p>
         )}
       </div>
@@ -182,20 +203,26 @@ const ContactForm = () => {
         <Controller
           name="message"
           control={control}
-          render={({ field }) => <Textarea id="message" placeholder="Your inquiry or message..." rows={5} {...field} aria-invalid={!!(clientErrors.message || serverErrors?.message)} />}
+          render={({ field }) => <Textarea id="message" placeholder="Your inquiry or message..." rows={5} {...field} aria-invalid={!!getCombinedErrors('message')} />}
         />
-         {(clientErrors.message || serverErrors?.message) && (
+         {getCombinedErrors('message') && (
           <p className="text-sm text-destructive mt-1">
-            {clientErrors.message?.message || serverErrors?.message?.[0]}
+            {getCombinedErrors('message')?.message}
           </p>
         )}
       </div>
       
-      {state.errors?._form && (
-         <p className="text-sm font-medium text-destructive">{state.errors._form.join(', ')}</p>
+      {submissionState.errors?._form && (
+         <p className="text-sm font-medium text-destructive">{submissionState.errors._form.join(', ')}</p>
+      )}
+      {submissionState.status === 'error' && submissionState.message && !submissionState.errors?._form && (
+         <p className="text-sm font-medium text-destructive">{submissionState.message}</p>
+      )}
+       {submissionState.status === 'success' && submissionState.message && (
+         <p className="text-sm font-medium text-green-600">{submissionState.message}</p>
       )}
 
-      <SubmitButton />
+      <SubmitButton pending={isSubmitting} />
     </form>
   );
 };
@@ -221,7 +248,4 @@ const ContactFormSection = () => {
   );
 };
 
-
 export default ContactFormSection;
-
-    
