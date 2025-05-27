@@ -57,21 +57,16 @@ const ContactForm = () => {
   const onSubmit = async (data: ContactFormData) => {
     setIsProcessing(true);
 
-    // IMPORTANT: Replace with your EmailJS Service ID, Template ID, and Public Key
-    const SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
-    const TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
-    const PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+    const SERVICE_ID = 'service_0tb90sq';
+    const TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID'; // MAKE SURE TO REPLACE THIS
+    const PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY'; // MAKE SURE TO REPLACE THIS
 
-    // Ensure your EmailJS template parameters match the keys in the 'data' object
-    // e.g., if your template uses {{name}}, {{email}}, etc.
     const templateParams = {
       name: data.name,
       email: data.email,
-      phone: data.phone || '', // Ensure optional fields are handled
+      phone: data.phone || '',
       course: data.course || '',
       message: data.message,
-      // EmailJS often requires 'to_name' or similar standard parameters
-      // to_name: 'GWO Training Solutions Team', 
     };
 
     try {
@@ -82,11 +77,25 @@ const ContactForm = () => {
         variant: 'default',
       });
       reset();
-    } catch (error) {
-      console.error('EmailJS send error:', error);
+    } catch (error: any) {
+      // Enhanced error logging
+      console.log('Raw EmailJS error object:', error);
+      if (error && typeof error === 'object') {
+        console.log('Detailed EmailJS Error JSON:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+        if ('status' in error) {
+          console.log('EmailJS error status:', error.status);
+        }
+        if ('text' in error) {
+          console.log('EmailJS error text:', error.text);
+        }
+      }
+      console.error('EmailJS send error summary:', error); // Original log for comparison
+
+      const errorText = (error && typeof error === 'object' && 'text' in error && typeof error.text === 'string') ? error.text : "Please try again later.";
+      
       toast({
         title: 'Error Sending Message',
-        description: "There was an issue sending your message. Please try again later or contact us directly.",
+        description: `There was an issue sending your message. ${errorText}`,
         variant: 'destructive',
       });
     } finally {
@@ -215,3 +224,4 @@ const ContactFormSection = () => {
 };
 
 export default ContactFormSection;
+
