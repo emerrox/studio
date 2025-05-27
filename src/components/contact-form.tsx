@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
+import emailjs from '@emailjs/browser';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,7 +41,7 @@ function SubmitButton({ pending }: { pending: boolean }) {
 
 const ContactForm = () => {
   const { toast } = useToast();
-  const [isProcessing, setIsProcessing] = useState(false); // Used for button pending state
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const { control, handleSubmit, reset, formState: { errors: clientErrors } } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
@@ -56,20 +56,42 @@ const ContactForm = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsProcessing(true);
-    // Simulate form submission for static export
-    // In a real static site, you'd submit to an external service here.
-    console.log("Form data submitted (client-side only):", data);
 
-    // Simulate a short delay for user feedback
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // IMPORTANT: Replace with your EmailJS Service ID, Template ID, and Public Key
+    const SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+    const TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+    const PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
 
-    toast({
-      title: 'Message Sent!',
-      description: "Thank you! Your message has been received (simulated).",
-      variant: 'default',
-    });
-    reset();
-    setIsProcessing(false);
+    // Ensure your EmailJS template parameters match the keys in the 'data' object
+    // e.g., if your template uses {{name}}, {{email}}, etc.
+    const templateParams = {
+      name: data.name,
+      email: data.email,
+      phone: data.phone || '', // Ensure optional fields are handled
+      course: data.course || '',
+      message: data.message,
+      // EmailJS often requires 'to_name' or similar standard parameters
+      // to_name: 'GWO Training Solutions Team', 
+    };
+
+    try {
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
+      toast({
+        title: 'Message Sent!',
+        description: "Thank you for your message. We'll be in touch shortly.",
+        variant: 'default',
+      });
+      reset();
+    } catch (error) {
+      console.error('EmailJS send error:', error);
+      toast({
+        title: 'Error Sending Message',
+        description: "There was an issue sending your message. Please try again later or contact us directly.",
+        variant: 'destructive',
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
